@@ -1,0 +1,25 @@
+        private CancellationTokenSource source;
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            source = new CancellationTokenSource();
+            int index = 0;
+            Task  task = new  Task(() => {
+                while (!source.IsCancellationRequested)
+                {
+                    Thread.Sleep(1000);
+                    textBox1.Invoke(new Action(() => {
+                        textBox1.AppendText($"{index},");
+
+                    }));
+                    index++;
+                }
+            }, source.Token);
+            task.Start();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            source.Cancel();
+        }
+        
