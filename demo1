@@ -1,0 +1,17 @@
+
+           CancellationTokenSource source = new CancellationTokenSource();
+            Task task = new Task(() =>
+            {
+                while (!source.IsCancellationRequested)
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("工作线程1启动");
+                }
+            });
+            task.Start();
+            source.CancelAfter(TimeSpan.FromSeconds(5));
+            var task2 = task.ContinueWith(p =>
+            {
+                Console.WriteLine("工作线程2启动");
+            });
+            task2.Wait();
