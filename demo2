@@ -1,0 +1,25 @@
+           // 有返回值
+           CancellationTokenSource source = new CancellationTokenSource();
+            source.Token.Register(() =>
+            {
+                Console.WriteLine("线程结束");
+            });
+            Task<int> task = new Task<int>(() =>
+            {
+                int index = 0;
+                while (!source.IsCancellationRequested)
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("工作线程1启动");
+                    index++;
+                }
+                return index;
+            });
+            task.Start();
+            source.CancelAfter(TimeSpan.FromSeconds(5));
+            var task2 = task.ContinueWith(p =>
+            {
+
+                Console.WriteLine("工作线程2启动:" + p.Result);
+            });
+            task2.Wait();
